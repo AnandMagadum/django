@@ -30,6 +30,7 @@ class CompanySerializer(serializers.Serializer):
         return Company.objects.create(validated_data)
     
     def update(self,instance,validated_data):
+        #hello
         instance.Name=validated_data.get('Name',instance.Name)
         instance.Type=validated_data.get('Type',instance.Type)
         instance.FoundedDate=validated_data.get('FoundedDate',instance.FoundedDate)
