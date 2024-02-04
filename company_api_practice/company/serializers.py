@@ -19,12 +19,12 @@ class employeeSerializer(serializers.HyperlinkedModelSerializer):
 class CompanySerializer(serializers.Serializer):
     Id=serializers.IntegerField(read_only=True)
     Name=serializers.CharField(max_length=100)
-    Type=serializers.ChoiceField(max_length=50,choices=company_choices,default='IT')
+    Type=serializers.ChoiceField(choices=company_choices,default='IT')
     FoundedDate=serializers.DateField()
-    Founder=serializers.CharField(max_length=100)
+    Founder=serializers.CharField()
     About=serializers.CharField(style={'base_template':'textarea.html'},allow_blank=True)
     Address=serializers.CharField()
-    Updated=serializers.DateTimeField(auto_now=True)
+    Updated=serializers.DateTimeField()
     
     def create(self,validated_data):
         return Company.objects.create(validated_data)
@@ -39,6 +39,12 @@ class CompanySerializer(serializers.Serializer):
         instance.Address=validated_data.get('Address',instance.Address)
         instance.save()
         return instance
+    
+class EmployeeSerializer(serializers.ModelSerializer):
+        Emp_ID=serializers.ReadOnlyField()
+        class Meta:
+            model=models.Employee
+            fields="__all__"
     
         
         
