@@ -17,7 +17,8 @@ class employeeSerializer(serializers.HyperlinkedModelSerializer):
 
 # creating custom made serializer for company model        
 class CompanySerializer(serializers.Serializer):
-    Id=serializers.IntegerField(read_only=True)
+    ID=serializers.ReadOnlyField()
+    Id=serializers.IntegerField(read_only=True,)
     Name=serializers.CharField(max_length=100)
     Type=serializers.ChoiceField(choices=company_choices,default='IT')
     FoundedDate=serializers.DateField()
@@ -27,7 +28,7 @@ class CompanySerializer(serializers.Serializer):
     Updated=serializers.DateTimeField()
     
     def create(self,validated_data):
-        return Company.objects.create(validated_data)
+        return Company.objects.create(**validated_data)
     
     def update(self,instance,validated_data):
         #hello

@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from rest_framework.renderers import JSONRenderer
 from django.forms.models import model_to_dict
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
 
@@ -26,19 +27,51 @@ class CompanyViewset(viewsets.ModelViewSet):
         empser=employeeSerializer(employees,many=True,context={"request":request})
         return Response(empser.data)
 # Create your views here.
-
-def company(request):
-    #print(model_to_dict(Company.objects.all()))
-    ser=CompanySerializer(Company.objects.all(),many=True)
-    # print(Company.objects.get(ID=1).__dict__)
-    # print(ser.data)
-    #print(Company.objects.all())
-    #print(ser.is_valid())
-    print(ser.data)
-    
-    return JsonResponse(ser.data,safe=False)
-
 @csrf_exempt
+@api_view(["GET","POST"])
+def company(request):
+    
+    if request.method=="GET":
+        try:
+            #print(model_to_dict(Company.objects.all()))
+            ser=CompanySerializer(Company.objects.all(),many=True)
+            # print(Company.objects.get(ID=1).__dict__)
+            # print(ser.data)
+            #print(Company.objects.all())
+            #print(ser.is_valid())
+            print(ser.data)
+            return JsonResponse(ser.data,safe=False)
+        except Exception as e:
+            return JsonResponse({"msg":str(e)+"Please report this error to admin through email admin abc@gmaail.com"},status=400)
+    if request.method=="POST":
+        ser=CompanySerializer(data=request.data)
+        #ser.create(request.data)
+        if ser.is_valid():
+            ser.save()
+            return JsonResponse(ser.data,status=201)
+        
+@api_view(["PUT","GET","DELETE"])
+@csrf_exempt
+def company_query(request,pk):
+    print("Hello")
+    det=Company.objects.get(pk=pk)
+    det2=Company.objects.filter(ID=pk)
+    print(det)
+    print(det2)
+    cmpnmae=det2[0].Name
+    if request.method=="PUT":
+        ser=CompanySerializer(det,data=request.data)
+        if ser.is_valid():
+            ser.save()
+            return JsonResponse(ser.data)
+        return JsonResponse(status=400)
+    
+    if request.method == "DELETE":
+        det.delete()
+        return JsonResponse({"msg":f"Deleted comapny {cmpnmae}"},status=204)
+            
+@csrf_exempt
+@api_view(["GET","DELETE","PUT"])
 def employee(request,pk):
 
     try:
@@ -48,11 +81,18 @@ def employee(request,pk):
     
     if request.method=="GET":
         ser=EmployeeSerializer(dataes)
+        print(ser.data)
         return JsonResponse(ser.data)
     
     if request.method=="PUT":
-        datatomod=JSONParser().parse(request)
-        ser=EmployeeSerializer(dataes,data=datatomod)
+        print(request)
+        print(request.user)
+        print(request.data)
+        # datatomod=JSONParser().parse(request)
+        # print("datammod",datatomod)
+        # print("datammod",datatomod)
+        ser=EmployeeSerializer(dataes,data=request.data)
+        print(ser)
         if ser.is_valid():
             ser.save()
             return JsonResponse(ser.data,status=201)
