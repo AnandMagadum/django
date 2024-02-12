@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from company import models
 from company.models import company_choices,employee_choices,Company
+from django.contrib.auth.models import User
 
 class companySerializer(serializers.HyperlinkedModelSerializer):
     ID=serializers.ReadOnlyField()
@@ -17,8 +18,8 @@ class employeeSerializer(serializers.HyperlinkedModelSerializer):
 
 # creating custom made serializer for company model        
 class CompanySerializer(serializers.Serializer):
-    ID=serializers.ReadOnlyField()
-    Id=serializers.IntegerField(read_only=True,)
+    #ID=serializers.ReadOnlyField()
+    ID=serializers.IntegerField(read_only=True,)
     Name=serializers.CharField(max_length=100)
     Type=serializers.ChoiceField(choices=company_choices,default='IT')
     FoundedDate=serializers.DateField()
@@ -49,4 +50,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
     
         
         
-        
+class UserSerializer(serializers.ModelSerializer):
+    Companys=serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all())
+    class Meta:
+        model=User
+        fields="__all__"

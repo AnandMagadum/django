@@ -25,7 +25,7 @@ class Company(models.Model):
     About=models.TextField(null=True)
     Address=models.TextField()
     Updated=models.DateTimeField(auto_now=True)
-    
+    owner=models.ForeignKey('auth.User',related_name="Companys",on_delete=models.CASCADE)
     def __str__(self):
         return str(self.ID)
     

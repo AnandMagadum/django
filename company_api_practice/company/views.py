@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from company.models import Company,Employee
-from company.serializers import companySerializer,employeeSerializer,CompanySerializer,EmployeeSerializer
+from company.serializers import companySerializer,employeeSerializer,CompanySerializer,EmployeeSerializer,UserSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -11,6 +11,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from django.http import HttpResponse
 from rest_framework.parsers import JSONParser
+from django.views import generic
+from django.contrib.auth.models import User
 
 
 class CompanyViewset(viewsets.ModelViewSet):
@@ -105,3 +107,12 @@ def employee(request,pk):
 class EmployeeViewset(viewsets.ModelViewSet):
     queryset=Employee.objects.all()
     serializer_class=employeeSerializer
+    
+class userslist(generic.ListView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
+    
+
+class userdetails(generic.RedirectView):
+    queryset=User.objects.all()
+    serializer_class=UserSerializer
